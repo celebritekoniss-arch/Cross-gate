@@ -141,6 +141,10 @@ export class PttClient {
       return;
     }
     if (!window.isSecureContext) throw new Error('Le micro exige une connexion HTTPS.');
+    if (!window.AudioWorkletNode || !navigator.mediaDevices?.getUserMedia) {
+      // Terminaux anciens (Android 4/5, navigateur intégré) : utiliser le raccordement en radio donneuse
+      throw new Error('Navigateur trop ancien pour l\'alternat. Installez un Chrome récent, ou raccordez ce terminal en radio donneuse.');
+    }
     this.ctx = new AudioContext({ latencyHint: 'interactive' });
     await this.ctx.audioWorklet.addModule('/audio-worklet.js');
     this.playback = new AudioWorkletNode(this.ctx, 'cg-playback', { outputChannelCount: [1] });

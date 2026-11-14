@@ -45,6 +45,7 @@ radios:
     id: dm4600
     name: "DM4600 station de contrôle"
     channel: vhf
+    profil: dmr          # dmr | analogique | hf | huawei-elte-portatif | huawei-elte-vehicule
     input_device: "USB Audio Device"   # nom ou numéro (liste : python -m crossgate cartes-son)
     output_device: "USB Audio Device"
     sample_rate: 48000
@@ -57,22 +58,24 @@ radios:
     id: barrett
     name: "Barrett 4090"
     channel: hf
+    profil: hf
     input_device: 2
     output_device: 2
     ptt: { type: cm108, port: /dev/hidraw0, gpio: 3, pre_ms: 300, tail_ms: 400 }
     cos: { type: vox, threshold_dbfs: -38 }
 
   # 1 bis) Terminal LTE Huawei (eLTE / TD-LTE) en radio donneuse : il reste sur son groupe eLTE
-  #    et le relie au reste du réseau. Alternat par le fil PTT du câble casque-micro (relais commandé en série).
+  #    et le relie au reste du réseau. Idéal : poste véhicule EV750/EV751 au poste de commandement.
   - type: audio
-    id: huawei-donneuse
-    name: "Terminal Huawei eLTE (donneur)"
+    id: huawei-ev751
+    name: "Huawei EV751 (donneur eLTE)"
     channel: elte
+    profil: huawei-elte-vehicule      # portatifs EP650/680/681/720/820/821 : huawei-elte-portatif
     input_device: "USB Audio Device #2"
     output_device: "USB Audio Device #2"
     sample_rate: 48000
-    ptt: { type: serie, port: /dev/ttyUSB2, line: rts, pre_ms: 400, tail_ms: 300 }   # la prise de parole LTE est plus lente
-    cos: { type: vox, threshold_dbfs: -40 }
+    ptt: { type: serie, port: /dev/ttyUSB2, line: rts }
+    cos: { type: vox }
 
   # 2) Liaison IP directe au relais SLR5500 (IPSC) + vocodeur ThumbDV
   #    Sans ThumbDV, la liaison reste connectée mais signale « vocodeur indisponible ».

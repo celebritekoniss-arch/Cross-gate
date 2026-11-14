@@ -198,3 +198,12 @@ def test_recorder_writes_wav(tmp_path, bus):
     assert len(files) == 1 and abs(files[0]["seconds"] - 1.0) < 0.05
     assert rec.resolve(files[0]["path"]) is not None
     assert rec.resolve("../../etc/passwd") is None
+
+
+def test_radio_profiles_fill_defaults_without_overriding():
+    from crossgate.config import SoundcardRadio
+
+    r = SoundcardRadio(type="audio", id="ev", name="EV751", channel="hf", profil="huawei-elte-vehicule", ptt={"type": "aucun"})
+    assert (r.ptt.pre_ms, r.ptt.tail_ms, r.cos.threshold_dbfs) == (400, 300, -40)
+    r2 = SoundcardRadio(type="audio", id="b", name="Barrett", channel="hf", profil="hf", ptt={"type": "aucun", "pre_ms": 500})
+    assert r2.ptt.pre_ms == 500 and r2.ptt.tail_ms == 400

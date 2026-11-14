@@ -36,11 +36,23 @@ CrossGate s'enregistre auprès du SLR5500 comme un site IP Site Connect (authent
 
 ### Mode 3 – Terminaux LTE Huawei (TD-LTE / eLTE)
 
-Trois raccordements possibles, du plus simple au plus intégré :
+Trois raccordements possibles :
 
-1. **Application CrossGate sur le terminal** : les terminaux eLTE Huawei sous Android (gamme EP) ouvrent l'application CrossGate dans leur navigateur, par leur liaison de données TD-LTE privée ou en 4G publique. Chaque terminal devient un participant CrossGate (alternat, GPS) sans aucun matériel supplémentaire.
-2. **Terminal Huawei en radio donneuse** : un terminal réglé sur un groupe du réseau eLTE est câblé à CrossGate comme une radio (mode 1), par sa prise accessoires ou un câble casque-micro avec alternat. Tout le groupe eLTE est alors interconnecté avec la HF, la DMR et les smartphones, sans licence Huawei supplémentaire. Exemple de configuration : `huawei-donneuse` dans `config/config.example.yaml`.
-3. **Intégration native au cœur eLTE** (dispatching Huawei) : CrossGate se connecterait directement au système de dispatching par l'interface de programmation (eSDK) que Huawei fournit à ses intégrateurs. Ce connecteur nécessite l'accès au kit de développement et à sa licence auprès de Huawei. Il sera ajouté quand ils seront disponibles.
+- **A. Application CrossGate sur le terminal** : le terminal Android ouvre l'application CrossGate dans un navigateur Chrome récent, par sa liaison de données eLTE ou 4G. Il devient un participant CrossGate (alternat, GPS), sans matériel supplémentaire.
+- **B. Radio donneuse** : le terminal reste sur son groupe eLTE et il est câblé à CrossGate par l'interface audio (mode 1), via sa prise accessoires ou un câble casque-micro avec alternat. Tout le groupe eLTE est interconnecté avec la HF, la DMR et les smartphones, sans licence Huawei.
+- **C. Lien de données** : un modem ou une passerelle eLTE donne au serveur CrossGate, ou à un site distant, un accès IP par le réseau privé.
+
+| Terminal Huawei | Type | Raccordement conseillé |
+|---|---|---|
+| EV750, EV751 | Poste véhicule | **B** : le meilleur poste donneur (alimentation et antenne fixes, à installer au poste de commandement) |
+| EP821, EP720 | Portatif Android à grand écran | **A** (avec Chrome récent installé), ou **B** |
+| EP820 | Portatif Android 4 | **B** (navigateur trop ancien pour l'alternat web) |
+| EP680, EP681, EP650 | Portatif à petit écran | **B** |
+| EG860 (CPE), EM710 (clé USB), TAU | Données seules | **C** |
+
+Réglages prêts à l'emploi dans `config.yaml`, à indiquer sur chaque radio donneuse avec `profil:` : `huawei-elte-portatif`, `huawei-elte-vehicule`, `dmr`, `analogique`, `hf`. Ils fixent le délai d'alternat et le seuil de détection. Une valeur écrite explicitement reste prioritaire.
+
+**Intégration directe au dispatching Huawei (eDC, eMDC)** : CrossGate pourra se connecter au cœur eLTE par l'interface de programmation (eSDK) que Huawei fournit à ses intégrateurs. Ce connecteur nécessite l'accès au kit de développement et sa licence. Il sera ajouté dès qu'ils seront disponibles.
 
 ### Et une radio Wi-Fi ou LTE ?
 
@@ -89,7 +101,7 @@ python -m crossgate config/config.yaml
 3. Décodage avec le ThumbDV (débit 460 800 ou 921 600 bauds selon le modèle).
 4. Émission IPSC expérimentale à partir d'un appel modèle.
 5. Comportement des smartphones en 4G (latence, mise en veille de l'écran).
-6. Terminal Huawei eLTE : application CrossGate dans son navigateur, puis câblage en radio donneuse (niveaux, alternat).
+6. Terminaux Huawei eLTE : application CrossGate sur EP821/EP720, câblage en radio donneuse d'un EV750/EV751 (niveaux, délai d'alternat).
 
 ## Structure
 

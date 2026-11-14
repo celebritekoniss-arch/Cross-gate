@@ -61,11 +61,23 @@ class CosConfig(BaseModel):
     threshold_dbfs: float = Field(-42.0, ge=-80, le=0)
 
 
+# Réglages par famille de radio donneuse : délai d'alternat, maintien, seuil VOX.
+# Une valeur écrite explicitement dans la configuration reste prioritaire.
+PROFILES: dict[str, dict] = {
+    "dmr": {"pre_ms": 150, "tail_ms": 250, "threshold_dbfs": -42},            # DM4600, DM4000, postes MOTOTRBO
+    "analogique": {"pre_ms": 100, "tail_ms": 200, "threshold_dbfs": -40},    # VHF/UHF analogique
+    "hf": {"pre_ms": 300, "tail_ms": 400, "threshold_dbfs": -38},            # Barrett 4050/4090, HF ALE
+    "huawei-elte-portatif": {"pre_ms": 450, "tail_ms": 300, "threshold_dbfs": -40},  # EP650, EP680/681, EP720, EP820/821
+    "huawei-elte-vehicule": {"pre_ms": 400, "tail_ms": 300, "threshold_dbfs": -40},  # EV750, EV751
+}
+
+
 class SoundcardRadio(BaseModel):
     type: Literal["audio"]
     id: str
     name: str
     channel: str
+    profil: Literal["dmr", "analogique", "hf", "huawei-elte-portatif", "huawei-elte-vehicule"] | None = None
     priority: int = 0
     input_device: str | int | None = None
     output_device: str | int | None = None
@@ -74,6 +86,19 @@ class SoundcardRadio(BaseModel):
     tx_gain_db: float = 0.0
     ptt: PttConfig = PttConfig()
     cos: CosConfig = CosConfig()
+
+    @model_validator(mode="before")
+    @classmethod
+    def _apply_profile(cls, data):
+        if isinstance(data, dict) and data.get("profil") in PROFILES:
+            prof = PROFILES[data["profil"]]
+            ptt = dict(data.get("ptt") or {})
+            cos = dict(data.get("cos") or {})
+            ptt.setdefault("pre_ms", prof["pre_ms"])
+            ptt.setdefault("tail_ms", prof["tail_ms"])
+            cos.setdefault("threshold_dbfs", prof["threshold_dbfs"])
+            data = {**data, "ptt": ptt, "cos": cos}
+        return data
 
 
 class VocoderConfig(BaseModel):
