@@ -1,0 +1,91 @@
+# CrossGate – exemple de configuration
+# Copiez ce fichier en config.yaml et adaptez-le. Les mots de passe sont des empreintes :
+#   docker compose run --rm crossgate python -m crossgate mot-de-passe
+
+server:
+  host: 0.0.0.0
+  port: 8443
+  ssl_cert: /config/certificats/crossgate.crt
+  ssl_key: /config/certificats/crossgate.key
+  data_dir: /donnees                 # journal, enregistrements, modèles IPSC
+  secret: "REMPLACEZ-PAR-UNE-PHRASE-SECRETE-LONGUE"
+  session_hours: 12
+
+audio:
+  hang_ms: 800      # silence avant de rendre le canal après une émission radio
+  tot_s: 60         # durée maximale d'une émission
+  record: true      # enregistrement de chaque émission (WAV)
+
+channels:
+  - { id: hf,  name: "HF Barrett 4090",     description: "Réseau HF longue distance" }
+  - { id: vhf, name: "VHF DMR SLR5500",     description: "Relais VHF, slot 1, GT 9" }
+  - { id: lte, name: "Équipes 4G",          description: "Smartphones" }
+
+# Interconnexions actives au démarrage (modifiables ensuite depuis la console)
+patches:
+  - [vhf, lte]
+
+users:
+  - username: pc
+    display_name: "Poste de commandement"
+    password: "pbkdf2$200000$..."     # à générer
+    role: admin                        # admin | operateur | utilisateur
+    priority: 10                       # peut interrompre une émission de priorité inférieure
+  - username: alpha1
+    display_name: "Alpha 1"
+    password: "pbkdf2$200000$..."
+    channels: [lte, vhf]               # ou "*" pour tous
+    default_channel: lte
+
+radios:
+  # 1) Radio « donneuse » par interface audio (mode recommandé, sans vocodeur)
+  #    DM4600 en station de contrôle sur le relais, ou Barrett 4090 : la radio code elle-même la voix.
+  - type: audio
+    id: dm4600
+    name: "DM4600 station de contrôle"
+    channel: vhf
+    input_device: "USB Audio Device"   # nom ou numéro (liste : python -m crossgate cartes-son)
+    output_device: "USB Audio Device"
+    sample_rate: 48000
+    rx_gain_db: 0
+    tx_gain_db: -3
+    ptt: { type: serie, port: /dev/ttyUSB0, line: rts, pre_ms: 150, tail_ms: 250 }
+    cos: { type: vox, threshold_dbfs: -42 }   # ou serie_cts si la sortie squelch est câblée
+
+  - type: audio
+    id: barrett
+    name: "Barrett 4090"
+    channel: hf
+    input_device: 2
+    output_device: 2
+    ptt: { type: cm108, port: /dev/hidraw0, gpio: 3, pre_ms: 300, tail_ms: 400 }
+    cos: { type: vox, threshold_dbfs: -38 }
+
+  # 2) Liaison IP directe au relais SLR5500 (IPSC) + vocodeur ThumbDV
+  #    Sans ThumbDV, la liaison reste connectée mais signale « vocodeur indisponible ».
+  # - type: ipsc
+  #   id: slr5500
+  #   name: "Relais SLR5500 (IP)"
+  #   channel: vhf
+  #   master_ip: 192.168.1.20
+  #   master_port: 50000
+  #   local_port: 50001
+  #   radio_id: 311999            # identifiant IPSC unique de la passerelle
+  #   auth_key: "0123456789"      # clé d'authentification IPSC du système, si activée
+  #   timeslot: 1
+  #   talkgroup: 9
+  #   tx_enabled: false           # émission vers le relais : expérimental (voir README)
+  #   vocoder: { type: thumbdv, port: /dev/ttyUSB1, baudrate: 460800 }
+
+  # 3) Radio simulée pour les essais sans matériel (répète ce qu'elle entend)
+  - type: simulateur
+    id: essai
+    name: "Écho de test"
+    channel: lte
+    mode: echo
+
+map:
+  center: [-4.01, 5.35]     # longitude, latitude (Abidjan)
+  zoom: 10
+  tiles: "https://tile.openstreetmap.org/{z}/{x}/{y}.png"   # ou votre serveur de tuiles local hors ligne
+  attribution: "© OpenStreetMap"

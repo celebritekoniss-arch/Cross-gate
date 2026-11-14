@@ -1,0 +1,11 @@
+{
+  "name": "CrossGate – Alternat radio",
+  "short_name": "CrossGate",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#10181f",
+  "theme_color": "#10181f",
+  "lang": "fr",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

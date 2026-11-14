@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CrossGate – Console</title>
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/vendor/maplibre-gl.css">
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <div id="login" class="login" hidden>
+    <form id="login-form">
+      <div>
+        <div class="eyebrow">CrossGate</div>
+        <h1 class="title" style="margin:4px 0 0;font-size:1.8rem">Console opérateur</h1>
+      </div>
+      <div class="field"><label for="username">Identifiant</label><input id="username" class="input" autocomplete="username" required></div>
+      <div class="field"><label for="password">Mot de passe</label><input id="password" class="input" type="password" autocomplete="current-password" required></div>
+      <p id="login-error" class="error" role="alert" hidden></p>
+      <button class="btn btn-primary" type="submit">Se connecter</button>
+    </form>
+  </div>
+
+  <div id="app" class="console" hidden>
+    <header>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span id="link-dot" class="dot"></span>
+        <div>
+          <div class="eyebrow">CrossGate</div>
+          <div class="title" style="font-size:1.25rem">Console de passerelle radio</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span id="who" class="muted"></span>
+        <a class="btn btn-small" href="/">Alternat mobile</a>
+        <button id="logout" class="btn btn-small" type="button">Quitter</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="col" aria-label="Canaux et interconnexions">
+        <div class="panel">
+          <h2>Canaux</h2>
+          <div id="channels" style="display:grid;gap:10px"></div>
+        </div>
+        <div class="panel">
+          <h2>Interconnexions</h2>
+          <div id="patches" style="display:grid;gap:6px"></div>
+          <form id="patch-form" style="display:grid;gap:8px">
+            <fieldset style="border:0;padding:0;margin:0">
+              <legend class="muted" style="font-size:0.875rem;margin-bottom:6px">Relier les canaux :</legend>
+              <div id="patch-checks" class="checks"></div>
+            </fieldset>
+            <button class="btn btn-primary btn-small" type="submit">Interconnecter</button>
+            <p id="patch-error" class="error" role="alert" hidden></p>
+          </form>
+        </div>
+      </section>
+
+      <section class="col" aria-label="Carte des positions" style="grid-template-rows:1fr;align-content:stretch">
+        <div class="map-wrap"><div id="map" role="img" aria-label="Carte des positions des équipes"></div></div>
+      </section>
+
+      <section class="col" aria-label="Journal et enregistrements">
+        <div class="panel">
+          <h2>Journal</h2>
+          <div id="events" class="events"></div>
+        </div>
+        <div class="panel">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h2>Enregistrements</h2>
+            <button id="refresh-rec" class="btn btn-small" type="button">Actualiser</button>
+          </div>
+          <div id="recordings" style="display:grid;gap:10px"></div>
+        </div>
+      </section>
+    </main>
+
+    <div class="dispatch">
+      <label for="dispatch-channel" class="title">Parler sur</label>
+      <select id="dispatch-channel" class="input" style="width:auto;min-width:200px"></select>
+      <button id="ptt" class="ptt" type="button" disabled>MAINTENIR POUR PARLER</button>
+      <span id="dispatch-status" class="muted" role="status" aria-live="polite">Barre d'espace : alternat</span>
+    </div>
+  </div>
+
+  <script src="/vendor/maplibre-gl.js"></script>
+  <script type="module" src="/console.js"></script>
+</body>
+</html>

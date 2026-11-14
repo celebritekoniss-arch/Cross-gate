@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#10181f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>CrossGate – Alternat</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icon.svg">
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <div id="login" class="login" hidden>
+    <form id="login-form">
+      <div>
+        <div class="eyebrow">CrossGate</div>
+        <h1 class="title" style="margin:4px 0 0;font-size:1.8rem">Connexion</h1>
+      </div>
+      <div class="field">
+        <label for="username">Identifiant</label>
+        <input id="username" class="input" autocomplete="username" autocapitalize="none" required>
+      </div>
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <input id="password" class="input" type="password" autocomplete="current-password" required>
+      </div>
+      <p id="login-error" class="error" role="alert" hidden></p>
+      <button class="btn btn-primary" type="submit">Se connecter</button>
+    </form>
+  </div>
+
+  <div id="app" class="ptt-app" hidden>
+    <div class="topbar">
+      <div class="who"><span id="link-dot" class="dot"></span><span id="who" class="title"></span></div>
+      <div style="display:flex;gap:8px">
+        <a id="console-link" class="btn btn-small" href="/console" hidden>Console</a>
+        <button id="logout" class="btn btn-small" type="button">Quitter</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="channel">Canal</label>
+      <select id="channel" class="input"></select>
+    </div>
+
+    <div class="ptt-zone">
+      <div style="display:grid;gap:18px;justify-items:center;width:100%">
+        <div id="status" class="status-card" role="status" aria-live="polite" style="width:100%">
+          <div id="status-big" class="big">Connexion…</div>
+          <div id="status-small" class="muted"></div>
+        </div>
+        <button id="ptt" class="ptt" type="button" aria-label="Appuyer et maintenir pour parler" disabled>PARLER</button>
+        <div class="meter" style="width:min(64vw,280px)" aria-hidden="true"><div id="meter"></div></div>
+      </div>
+    </div>
+
+    <div class="footer-info">
+      <span id="gps">Position : en attente</span>
+      <span>Maintenez le bouton pour parler</span>
+    </div>
+  </div>
+
+  <script type="module" src="/ptt.js"></script>
+</body>
+</html>

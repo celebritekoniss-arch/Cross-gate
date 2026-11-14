@@ -1,0 +1,20 @@
+services:
+  crossgate:
+    build: .
+    image: crossgate:latest
+    container_name: crossgate
+    restart: unless-stopped
+    # Réseau de l'hôte : nécessaire pour l'IPSC (UDP) avec le relais et la découverte des pairs
+    network_mode: host
+    environment:
+      CROSSGATE_CONFIG: /config/config.yaml
+      CROSSGATE_IP: "192.168.1.50"   # adresse IP du serveur, ajoutée au certificat
+    volumes:
+      - ./config:/config
+      - ./donnees:/donnees
+      - /dev/snd:/dev/snd            # cartes son USB (interfaces radio)
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0    # alternat série ou boîtier ThumbDV : adaptez la liste
+    group_add:
+      - audio
+      - dialout
