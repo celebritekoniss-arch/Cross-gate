@@ -1,6 +1,6 @@
 # CrossGate
 
-Passerelle radio sur IP de COGITECH : elle interconnecte les réseaux **HF** (Barrett 4090), **VHF/UHF DMR** (relais Motorola SLR5500, postes MOTOTRBO) et les **smartphones** en 4G ou Wi-Fi, avec une console d'opérateur.
+Passerelle radio sur IP de COGITECH : elle interconnecte les réseaux **HF** (Barrett 4090), **VHF/UHF DMR** (relais Motorola SLR5500, postes MOTOTRBO), **LTE professionnel** (terminaux Huawei TD-LTE / eLTE) et les **smartphones** en 4G ou Wi-Fi, avec une console d'opérateur.
 
 - **Alternat sur smartphone** : application web installable (Android, iPhone), bouton « parler », position GPS, reconnexion automatique.
 - **Console** : canaux et participants en direct, interconnexion de canaux en un clic (HF ↔ VHF ↔ 4G), déplacement d'un participant, carte des positions, journal horodaté, écoute des enregistrements, alternat au clavier (barre d'espace).
@@ -33,6 +33,14 @@ CrossGate s'enregistre auprès du SLR5500 comme un site IP Site Connect (authent
 - **Réception** (relais → smartphones et HF) : opérationnelle.
 - **Émission** (smartphones et HF → relais) : **expérimentale**. Elle part d'un appel modèle capturé sur votre relais : dans la console, un administrateur clique sur **Modèle** à côté de la liaison IPSC, puis fait un appel d'au moins une seconde depuis une radio du groupe. Activez ensuite `tx_enabled: true`. À valider sur site avant tout usage opérationnel.
 - Côté relais : ajoutez la passerelle comme pair IP Site Connect (MOTOTRBO CPS), avec un identifiant unique (`radio_id`) et la même clé d'authentification.
+
+### Mode 3 – Terminaux LTE Huawei (TD-LTE / eLTE)
+
+Trois raccordements possibles, du plus simple au plus intégré :
+
+1. **Application CrossGate sur le terminal** : les terminaux eLTE Huawei sous Android (gamme EP) ouvrent l'application CrossGate dans leur navigateur, par leur liaison de données TD-LTE privée ou en 4G publique. Chaque terminal devient un participant CrossGate (alternat, GPS) sans aucun matériel supplémentaire.
+2. **Terminal Huawei en radio donneuse** : un terminal réglé sur un groupe du réseau eLTE est câblé à CrossGate comme une radio (mode 1), par sa prise accessoires ou un câble casque-micro avec alternat. Tout le groupe eLTE est alors interconnecté avec la HF, la DMR et les smartphones, sans licence Huawei supplémentaire. Exemple de configuration : `huawei-donneuse` dans `config/config.example.yaml`.
+3. **Intégration native au cœur eLTE** (dispatching Huawei) : CrossGate se connecterait directement au système de dispatching par l'interface de programmation (eSDK) que Huawei fournit à ses intégrateurs. Ce connecteur nécessite l'accès au kit de développement et à sa licence auprès de Huawei. Il sera ajouté quand ils seront disponibles.
 
 ### Et une radio Wi-Fi ou LTE ?
 
@@ -81,6 +89,7 @@ python -m crossgate config/config.yaml
 3. Décodage avec le ThumbDV (débit 460 800 ou 921 600 bauds selon le modèle).
 4. Émission IPSC expérimentale à partir d'un appel modèle.
 5. Comportement des smartphones en 4G (latence, mise en veille de l'écran).
+6. Terminal Huawei eLTE : application CrossGate dans son navigateur, puis câblage en radio donneuse (niveaux, alternat).
 
 ## Structure
 

@@ -20,6 +20,7 @@ channels:
   - { id: hf,  name: "HF Barrett 4090",     description: "Réseau HF longue distance" }
   - { id: vhf, name: "VHF DMR SLR5500",     description: "Relais VHF, slot 1, GT 9" }
   - { id: lte, name: "Équipes 4G",          description: "Smartphones" }
+  - { id: elte, name: "LTE Huawei",         description: "Groupe du réseau TD-LTE / eLTE" }
 
 # Interconnexions actives au démarrage (modifiables ensuite depuis la console)
 patches:
@@ -60,6 +61,18 @@ radios:
     output_device: 2
     ptt: { type: cm108, port: /dev/hidraw0, gpio: 3, pre_ms: 300, tail_ms: 400 }
     cos: { type: vox, threshold_dbfs: -38 }
+
+  # 1 bis) Terminal LTE Huawei (eLTE / TD-LTE) en radio donneuse : il reste sur son groupe eLTE
+  #    et le relie au reste du réseau. Alternat par le fil PTT du câble casque-micro (relais commandé en série).
+  - type: audio
+    id: huawei-donneuse
+    name: "Terminal Huawei eLTE (donneur)"
+    channel: elte
+    input_device: "USB Audio Device #2"
+    output_device: "USB Audio Device #2"
+    sample_rate: 48000
+    ptt: { type: serie, port: /dev/ttyUSB2, line: rts, pre_ms: 400, tail_ms: 300 }   # la prise de parole LTE est plus lente
+    cos: { type: vox, threshold_dbfs: -40 }
 
   # 2) Liaison IP directe au relais SLR5500 (IPSC) + vocodeur ThumbDV
   #    Sans ThumbDV, la liaison reste connectée mais signale « vocodeur indisponible ».
